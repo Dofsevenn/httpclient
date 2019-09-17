@@ -1,24 +1,29 @@
+package no.kristiania.httpclient;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 
-class HttpClient {
+public class HttpClient {
 
 
     private String host;
+    private int statusCode = 200;
+    private String requestTarget;
 
-    public HttpClient(String host) {
+    public HttpClient(String host, String requestTarget) {
         this.host = host;
+        this.requestTarget = requestTarget;
     }
 
     public static void main(String[] args) throws IOException {
-        new HttpClient("urlecho.appspot.com").executeRequest();
+        new HttpClient("urlecho.appspot.com", "/echo?status=200&Content-Type=text%2Fhtml&body=Hello%20world!").executeRequest();
     }
 
-    private void executeRequest() throws IOException {
+    void executeRequest() throws IOException {
         try(Socket socket = new Socket(host, 80)) {
 
-            socket.getOutputStream().write("GET /echo?status=200&Content-Type=text%2Fhtml&body=Hello%20world! HTTP/1.1\r\n"
+            socket.getOutputStream().write(("GET " + requestTarget + " HTTP/1.1\r\n")
                     .getBytes());
             socket.getOutputStream().write(("Host:" + host + "\r\n").getBytes());
             socket.getOutputStream().write("connection: close\r\n".getBytes());
@@ -31,5 +36,13 @@ class HttpClient {
                 System.out.print((char) c);
             }
         }
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(int  statusCode) {
+        this.statusCode = statusCode;
     }
 }
