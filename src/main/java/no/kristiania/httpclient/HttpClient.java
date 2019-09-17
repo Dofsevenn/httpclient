@@ -10,6 +10,7 @@ public class HttpClient {
     private String host;
     private int statusCode = 200;
     private String requestTarget;
+    private String statusLine;
 
     public HttpClient(String host, String requestTarget) {
         this.host = host;
@@ -32,6 +33,13 @@ public class HttpClient {
 
             InputStream input = socket.getInputStream();
             int c;
+
+            StringBuilder statusLine = new StringBuilder();
+            while ((c = input.read()) != -1 && c != '\r') {
+                statusLine.append((char)c);
+            }
+            this.statusLine = statusLine.toString();
+
             while ((c = input.read()) != -1) {
                 System.out.print((char) c);
             }
